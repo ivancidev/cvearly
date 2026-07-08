@@ -1,0 +1,418 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+
+export function CVForm() {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Form states
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [extraContext, setExtraContext] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  
+  // UI states
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [progressStep, setProgressStep] = useState(0);
+  const [remainingGenerations, setRemainingGenerations] = useState(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("cvearly_remaining");
+      return cached ? parseInt(cached, 10) : 2;
+    }
+    return 2;
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  const loadingSteps = [
+    "Reading uploaded resume profile...",
+    "Connecting to public GitHub API...",
+    "Analyzing top starred repositories...",
+    "Extracting critical keywords from job offer...",
+    "Tailoring experience milestones using active verbs...",
+    "Running ATS score verification... Almost ready!",
+  ];
+
+  // Cycle loading steps
+  useEffect(() => {
+    if (!isGenerating) return;
+
+    const interval = setInterval(() => {
+      setProgressStep((prev) => {
+        if (prev < loadingSteps.length - 1) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isGenerating, loadingSteps.length]);
+
+  // File drag handlers
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragActive(true);
+    } else if (e.type === "dragleave") {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const droppedFile = e.dataTransfer.files[0];
+      const ext = droppedFile.name.split(".").pop()?.toLowerCase();
+      if (["pdf", "docx", "txt"].includes(ext || "")) {
+        setFile(droppedFile);
+        setError(null);
+      } else {
+        setError("Unsupported file format. Please upload PDF, DOCX, or TXT.");
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeFile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  // Read file as plain text (for TXT)
+  const fileToText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName || !email || !jobDescription) {
+      setError("Please fill in Full Name, Email, and Job Description.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setProgressStep(0);
+    setError(null);
+
+    try {
+      let pdfFileBase64 = "";
+      let docxFileBase64 = "";
+      let extractedCvText = "";
+
+      if (file) {
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        if (ext === "pdf") {
+          pdfFileBase64 = await fileToBase64(file);
+        } else if (ext === "docx") {
+          docxFileBase64 = await fileToBase64(file);
+        } else if (ext === "txt") {
+          extractedCvText = await fileToText(file);
+        }
+      }
+
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          email,
+          githubUrl,
+          jobDescription,
+          extraContext,
+          pdfFileBase64,
+          docxFileBase64,
+          extractedCvText,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Failed to generate optimized resume");
+      }
+
+      const data = await response.json();
+      
+      // Cache results in session storage for the results screen
+      sessionStorage.setItem("cv_result", JSON.stringify(data));
+      
+      // Update generation counter
+      const nextRemaining = Math.max(0, remainingGenerations - 1);
+      setRemainingGenerations(nextRemaining);
+      localStorage.setItem("cvearly_remaining", nextRemaining.toString());
+
+      // Navigate to results page
+      router.push("/result");
+    } catch (err) {
+      console.error(err);
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred during resume optimization.";
+      setError(errMsg);
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-2xl mx-auto px-6 py-10 md:py-16">
+      <AnimatePresence mode="wait">
+        {!isGenerating ? (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="text-center mb-10">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-2 font-sans">
+                Generate your CV
+              </h1>
+              <p className="text-sm text-zinc-400">
+                Tailor your developer experience and projects for the role in seconds.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {/* Full Name & Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  label="Full Name"
+                  placeholder="Ada Lovelace"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+                <Input
+                  label="Email Address"
+                  type="email"
+                  placeholder="ada@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* GitHub profile URL */}
+              <Input
+                label={
+                  <span className="flex items-center justify-between w-full">
+                    <span>GitHub Profile URL</span>
+                    <span className="text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Optional
+                    </span>
+                  </span>
+                }
+                placeholder="https://github.com/username"
+                value={githubUrl}
+                onChange={(e) => setGithubUrl(e.target.value)}
+              />
+
+              {/* File Upload Drop Zone */}
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
+                  Upload Current CV
+                  <span className="ml-2 text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Optional
+                  </span>
+                </label>
+                
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept=".pdf,.docx,.txt"
+                  className="hidden"
+                />
+
+                <div
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={triggerFileInput}
+                  className={`w-full py-8 px-6 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-3 cursor-pointer transition-all ${
+                    isDragActive
+                      ? "border-zinc-500 bg-zinc-900/10"
+                      : file
+                      ? "border-emerald-500/40 bg-emerald-500/[0.02]"
+                      : "border-zinc-900 bg-zinc-950/50 hover:border-zinc-800 hover:bg-zinc-950"
+                  }`}
+                >
+                  {file ? (
+                    <>
+                      {/* Uploaded File state */}
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-zinc-100 max-w-[280px] truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-zinc-500 mt-0.5">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="text-xs text-zinc-500 hover:text-red-400 border border-zinc-800 hover:border-red-500/30 bg-zinc-950 px-3 py-1 rounded-lg transition-colors mt-2"
+                      >
+                        Remove file
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Empty Upload state */}
+                      <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center text-zinc-400 group-hover:scale-105 transition-transform">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-zinc-300">
+                          <span className="text-violet-400 font-semibold">Click to upload</span> or drag &amp; drop
+                        </p>
+                        <p className="text-xs text-zinc-500 mt-1">
+                          PDF, DOCX, or TXT (Max 5MB)
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Job Description */}
+              <Textarea
+                label="Job Description"
+                placeholder="Paste the job offer details, requirements, and keywords here..."
+                className="h-36"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                required
+              />
+
+              {/* Extra context */}
+              <Textarea
+                label={
+                  <span className="flex items-center justify-between w-full">
+                    <span>Extra Context</span>
+                    <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Optional
+                    </span>
+                  </span>
+                }
+                placeholder="Specific certifications, key achievements, or items you want the engine to prioritize..."
+                className="h-24"
+                value={extraContext}
+                onChange={(e) => setExtraContext(e.target.value)}
+              />
+
+              {error && (
+                <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 text-sm text-red-400 flex items-start gap-2.5">
+                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Submit CTA */}
+              <Button type="submit" size="lg" className="w-full flex items-center justify-center gap-2 mt-4 font-semibold">
+                Optimize my CV
+              </Button>
+
+              {/* Remaining Counter */}
+              <p className="text-center text-xs text-zinc-500">
+                <span className="text-zinc-400 font-semibold">{remainingGenerations}</span> generations remaining today
+              </p>
+            </form>
+          </motion.div>
+        ) : (
+          /* Custom Loading View */
+          <motion.div
+            key="loader"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-20 text-center"
+          >
+            {/* Spinning Indicator */}
+            <div className="relative w-20 h-20 mb-8">
+              {/* Pulsing glow ring */}
+              <div className="absolute inset-0 rounded-full border-4 border-zinc-850/20 animate-ping" />
+              {/* Spinner */}
+              <svg className="w-full h-full animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            </div>
+
+            <motion.h3
+              key={progressStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="text-lg sm:text-xl font-bold text-white mb-3"
+            >
+              {loadingSteps[progressStep]}
+            </motion.h3>
+
+            <p className="text-sm text-zinc-500 max-w-sm">
+              We extract keywords, analyze commits, and build your tailor-made document. This can take up to 20 seconds.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+export default CVForm;

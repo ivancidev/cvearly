@@ -1,0 +1,9 @@
+# Normalize line endings to LF on commit across all OS
+* text=auto eol=lf
+
+# Force binary treatment for images/fonts
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.woff binary
