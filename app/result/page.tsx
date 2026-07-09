@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/shared/navbar";
@@ -14,14 +14,13 @@ import { GenerationResponse } from "@/types";
 export default function ResultPage() {
   const [result, setResult] = useState<GenerationResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const cvRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Scroll container to top
     window.scrollTo({ top: 0 });
 
     let active = true;
 
-    // Defer sessionStorage read to bypass synchronous setState in effect linter check
     const timer = setTimeout(() => {
       if (!active) return;
       const cachedResult = sessionStorage.getItem("cv_result");
@@ -85,7 +84,7 @@ export default function ResultPage() {
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-8 relative z-10 flex flex-col gap-6">
-        
+
         {/* CV Ready Success Banner */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -109,7 +108,7 @@ export default function ResultPage() {
 
         {/* Dynamic 2-column Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-8 items-start mb-12">
-          
+
           {/* Left Column: CV A4 Preview */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
@@ -117,7 +116,7 @@ export default function ResultPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="w-full flex-grow"
           >
-            <CVPreview cvData={result.cv} />
+            <CVPreview cvData={result.cv} ref={cvRef} />
           </motion.div>
 
           {/* Right Column: Score Gauge & Tools */}
@@ -132,10 +131,10 @@ export default function ResultPage() {
 
             {/* CTA download buttons */}
             <div className="flex flex-col gap-3">
-              <DownloadButton cvData={result.cv} />
-              
+              <DownloadButton cvData={result.cv} cvRef={cvRef} />
+
               <Link href="/generate">
-                <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-violet-500/50 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none">
+                <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-violet-500/50 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none cursor-pointer">
                   Generate again
                 </button>
               </Link>

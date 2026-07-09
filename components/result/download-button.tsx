@@ -1,57 +1,51 @@
 "use client";
 
 import React, { useState } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { Button } from "../ui/button";
 import { CVData } from "@/types";
-import { generateCVDocx } from "@/lib/generate-cv";
 
 interface DownloadButtonProps {
   cvData: CVData;
+  cvRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export function DownloadButton({ cvData }: DownloadButtonProps) {
+export function DownloadButton({ cvData, cvRef }: DownloadButtonProps) {
   const [status, setStatus] = useState<"idle" | "generating" | "success">("idle");
 
   const handleDownload = async () => {
-    if (status !== "idle") return;
+    if (status !== "idle" || !cvRef.current) return;
     setStatus("generating");
 
     try {
-      // Compile document
-      const blob = await generateCVDocx(cvData);
-      
-      // Setup file download anchor
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      
-      // Clean filename matching name
+      const canvas = await html2canvas(cvRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = (canvas.height * pageWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+
       const safeName = cvData.personal.fullName.replace(/[^a-zA-Z0-9]/g, "_");
-      link.href = url;
-      link.download = `${safeName}_CV_Optimized.docx`;
-      
-      document.body.appendChild(link);
-      link.click();
-      
-      // Clean up
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      
+      pdf.save(`${safeName}_CV_Optimized.pdf`);
+
       setStatus("success");
-      
-      // Reset button state
-      setTimeout(() => {
-        setStatus("idle");
-      }, 2500);
+      setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
-      console.error("Failed to generate and download docx", err);
+      console.error("Failed to generate PDF", err);
       setStatus("idle");
     }
   };
 
   const getLabel = () => {
-    if (status === "generating") return "Generating Docx...";
+    if (status === "generating") return "Generating PDF...";
     if (status === "success") return "Downloaded ✓";
-    return "Download .docx";
+    return "Download PDF";
   };
 
   return (
