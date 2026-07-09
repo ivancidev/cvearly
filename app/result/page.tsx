@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/shared/navbar";
@@ -14,7 +14,6 @@ import { GenerationResponse } from "@/types";
 export default function ResultPage() {
   const [result, setResult] = useState<GenerationResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const cvRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -116,7 +115,7 @@ export default function ResultPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="w-full flex-grow"
           >
-            <CVPreview cvData={result.cv} ref={cvRef} />
+            <CVPreview cvData={result.cv} />
           </motion.div>
 
           {/* Right Column: Score Gauge & Tools */}
@@ -131,7 +130,7 @@ export default function ResultPage() {
 
             {/* CTA download buttons */}
             <div className="flex flex-col gap-3">
-              <DownloadButton cvData={result.cv} cvRef={cvRef} />
+              <DownloadButton cvData={result.cv} />
 
               <Link href="/generate">
                 <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-violet-500/50 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none cursor-pointer">
