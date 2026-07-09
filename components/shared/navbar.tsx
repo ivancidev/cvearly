@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
+import { GitHubStarButton } from "./github-star-button";
+
+// GitHub repo URL — defined in github-star-button.tsx
 
 export function Navbar() {
   const pathname = usePathname();
@@ -32,7 +35,10 @@ export function Navbar() {
         </span>
       </Link>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3">
+        {/* GitHub star button — always visible */}
+        <GitHubStarButton />
+
         {isHome && (
           <>
             <a
