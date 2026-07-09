@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { getRateLimitState, consumeRateLimit } from "@/lib/rate-limit";
 
 export function CVForm() {
   const router = useRouter();
@@ -23,14 +24,14 @@ export function CVForm() {
   const [isDragActive, setIsDragActive] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
-  const [remainingGenerations, setRemainingGenerations] = useState(() => {
-    if (typeof window !== "undefined") {
-      const cached = localStorage.getItem("cvearly_remaining");
-      return cached ? parseInt(cached, 10) : 2;
-    }
-    return 2;
-  });
+  const DAILY_LIMIT = 3;
+
+  // Daily reset rate limit — logic lives in lib/rate-limit.ts
+  const [remainingGenerations, setRemainingGenerations] = useState<number>(
+    () => getRateLimitState(DAILY_LIMIT)
+  );
   const [error, setError] = useState<string | null>(null);
+  const isLimitReached = remainingGenerations <= 0;
 
   const loadingSteps = [
     "Reading uploaded resume profile...",
@@ -177,10 +178,9 @@ export function CVForm() {
       // Cache results in session storage for the results screen
       sessionStorage.setItem("cv_result", JSON.stringify(data));
       
-      // Update generation counter
-      const nextRemaining = Math.max(0, remainingGenerations - 1);
+      // Update generation counter (logic in lib/rate-limit.ts)
+      const nextRemaining = consumeRateLimit(remainingGenerations);
       setRemainingGenerations(nextRemaining);
-      localStorage.setItem("cvearly_remaining", nextRemaining.toString());
 
       // Navigate to results page
       router.push("/result");
@@ -365,14 +365,42 @@ export function CVForm() {
               )}
 
               {/* Submit CTA */}
-              <Button type="submit" size="lg" className="w-full flex items-center justify-center gap-2 mt-4 font-semibold">
-                Optimize my CV
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isLimitReached}
+                className="w-full flex items-center justify-center gap-2 mt-4 font-semibold"
+              >
+                {isLimitReached ? "Daily limit reached" : "Optimize my CV"}
               </Button>
 
               {/* Remaining Counter */}
-              <p className="text-center text-xs text-zinc-500">
-                <span className="text-zinc-400 font-semibold">{remainingGenerations}</span> generations remaining today
-              </p>
+              {isLimitReached ? (
+                <div className="text-center p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
+                  <p className="text-xs text-amber-400 font-medium">
+                    You&apos;ve used your {DAILY_LIMIT} free generations for today.
+                    Resets tomorrow — or{" "}
+                    <a
+                      href="https://github.com/ivancidev/cvearly"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:text-amber-300 transition-colors cursor-pointer"
+                    >
+                      self-host with your own API key
+                    </a>
+                    .
+                  </p>
+                </div>
+              ) : (
+                <p className="text-center text-xs text-zinc-500">
+                  <span className={`font-semibold ${
+                    remainingGenerations === 1 ? "text-amber-400" : "text-zinc-400"
+                  }`}>
+                    {remainingGenerations}
+                  </span>{" "}
+                  of {DAILY_LIMIT} free generations remaining today
+                </p>
+              )}
             </form>
           </motion.div>
         ) : (
