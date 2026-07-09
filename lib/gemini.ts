@@ -128,8 +128,14 @@ async function withRetry<T>(
     } catch (err: unknown) {
       lastError = err;
       const msg = err instanceof Error ? err.message : String(err);
-      const is503 = msg.includes("503") || msg.includes("UNAVAILABLE") || msg.includes("high demand");
-      if (!is503 || attempt === maxAttempts) throw err;
+      const isRetryable =
+        msg.includes("503") ||
+        msg.includes("UNAVAILABLE") ||
+        msg.includes("high demand") ||
+        msg.includes("fetch failed") ||
+        msg.includes("ECONNRESET") ||
+        msg.includes("ETIMEDOUT");
+      if (!isRetryable || attempt === maxAttempts) throw err;
       const delay = baseDelayMs * Math.pow(2, attempt - 1); // 1s, 2s, 4s
       console.warn(`Gemini 503 — retrying in ${delay}ms (attempt ${attempt}/${maxAttempts})...`);
       await new Promise((resolve) => setTimeout(resolve, delay));

@@ -19,10 +19,42 @@ export function DownloadButton({ cvData, cvRef }: DownloadButtonProps) {
     setStatus("generating");
 
     try {
-      const canvas = await html2canvas(cvRef.current, {
+      const el = cvRef.current;
+
+      // Pre-compute RGB colors from the live DOM before html2canvas clones it.
+      // html2canvas can't parse oklch/lab (Tailwind v4 default), so we collect
+      // computed styles here (browser resolves them to rgb()) and re-apply in onclone.
+      const allOriginal = [el, ...Array.from(el.querySelectorAll<HTMLElement>("*"))];
+      const styleCache = allOriginal.map((node) => {
+        const cs = window.getComputedStyle(node);
+        return {
+          color: cs.color,
+          backgroundColor: cs.backgroundColor,
+          borderTopColor: cs.borderTopColor,
+          borderRightColor: cs.borderRightColor,
+          borderBottomColor: cs.borderBottomColor,
+          borderLeftColor: cs.borderLeftColor,
+        };
+      });
+
+      const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
+        logging: false,
+        onclone: (_doc, clonedEl) => {
+          const allCloned = [clonedEl, ...Array.from(clonedEl.querySelectorAll<HTMLElement>("*"))];
+          allCloned.forEach((node, i) => {
+            const s = styleCache[i];
+            if (!s) return;
+            node.style.color = s.color;
+            node.style.backgroundColor = s.backgroundColor;
+            node.style.borderTopColor = s.borderTopColor;
+            node.style.borderRightColor = s.borderRightColor;
+            node.style.borderBottomColor = s.borderBottomColor;
+            node.style.borderLeftColor = s.borderLeftColor;
+          });
+        },
       });
 
       const imgData = canvas.toDataURL("image/png");
