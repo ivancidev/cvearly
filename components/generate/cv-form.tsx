@@ -128,8 +128,13 @@ export function CVForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !jobDescription) {
-      setError("Please fill in Full Name, Email, and Job Description.");
+    // name + email only required if no CV file is uploaded
+    if (!file && (!fullName || !email)) {
+      setError("Please fill in Full Name and Email, or upload your CV so we can extract them automatically.");
+      return;
+    }
+    if (!jobDescription) {
+      setError("Please paste the job description.");
       return;
     }
 
@@ -186,7 +191,12 @@ export function CVForm() {
       router.push("/result");
     } catch (err) {
       console.error(err);
-      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred during resume optimization.";
+      const rawMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      // Surface a friendlier message for Gemini 503 spikes
+      const errMsg =
+        rawMsg.includes("503") || rawMsg.includes("UNAVAILABLE") || rawMsg.includes("high demand")
+          ? "Gemini is experiencing high demand right now. We’ll retry automatically — if this persists, try again in a minute."
+          : rawMsg;
       setError(errMsg);
       setIsGenerating(false);
     }
@@ -212,22 +222,38 @@ export function CVForm() {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              {/* Full Name & Email */}
+              {/* Full Name & Email — optional if CV file uploaded */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                  label="Full Name"
-                  placeholder="Ada Lovelace"
+                  label={
+                    <span className="flex items-center justify-between w-full">
+                      <span>Full Name</span>
+                      {file && (
+                        <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Auto-detected
+                        </span>
+                      )}
+                    </span>
+                  }
+                  placeholder={file ? "Extracted from your CV" : "Ada Lovelace"}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  required
                 />
                 <Input
-                  label="Email Address"
+                  label={
+                    <span className="flex items-center justify-between w-full">
+                      <span>Email Address</span>
+                      {file && (
+                        <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Auto-detected
+                        </span>
+                      )}
+                    </span>
+                  }
                   type="email"
-                  placeholder="ada@example.com"
+                  placeholder={file ? "Extracted from your CV" : "ada@example.com"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
               </div>
 

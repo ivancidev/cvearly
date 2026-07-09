@@ -18,9 +18,17 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!fullName || !email || !jobDescription) {
+    // name + email are optional when a CV file is uploaded — Gemini extracts them
+    const hasFile = !!pdfFileBase64 || !!docxFileBase64 || !!clientExtractedText;
+    if (!jobDescription) {
       return NextResponse.json(
-        { error: "Full name, email, and job description are required fields" },
+        { error: "Job description is required" },
+        { status: 400 }
+      );
+    }
+    if (!hasFile && (!fullName || !email)) {
+      return NextResponse.json(
+        { error: "Full name and email are required when no CV file is uploaded" },
         { status: 400 }
       );
     }
