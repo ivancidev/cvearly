@@ -112,6 +112,39 @@ const responseSchema = {
 };
 
 /**
+/**
+ * Retries an async function with exponential backoff.
+ * Specifically handles Gemini 503 UNAVAILABLE (high demand) errors.
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts = 3,
+  baseDelayMs = 1000
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      lastError = err;
+      const msg = err instanceof Error ? err.message : String(err);
+      const isRetryable =
+        msg.includes("503") ||
+        msg.includes("UNAVAILABLE") ||
+        msg.includes("high demand") ||
+        msg.includes("fetch failed") ||
+        msg.includes("ECONNRESET") ||
+        msg.includes("ETIMEDOUT");
+      if (!isRetryable || attempt === maxAttempts) throw err;
+      const delay = baseDelayMs * Math.pow(2, attempt - 1); // 1s, 2s, 4s
+      console.warn(`Gemini 503 — retrying in ${delay}ms (attempt ${attempt}/${maxAttempts})...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
+
+/**
  * Optimizes a resume based on a job description and GitHub projects using Gemini.
  */
 export async function optimizeCV(params: OptimizeCVParams): Promise<GenerationResponse> {
@@ -131,13 +164,15 @@ export async function optimizeCV(params: OptimizeCVParams): Promise<GenerationRe
   } = params;
 
   // Build the textual prompt details
+  // Name and email are optional when a CV file is provided (Gemini extracts them)
+  const hasFile = !!pdfFileBase64 || !!extractedCvText;
   let promptText = `
 You are an expert technical recruiter and ATS (Applicant Tracking System) optimizer.
 Your goal is to tailor the candidate's CV to match the following target job description as closely as possible.
 Make sure to emphasize the skills, keywords, and qualifications listed in the job description while maintaining authenticity.
 
-Candidate Name: ${fullName}
-Candidate Email: ${email}
+${fullName ? `Candidate Name: ${fullName}` : hasFile ? "Candidate Name: (extract from the uploaded CV document)" : "Candidate Name: Unknown"}
+${email ? `Candidate Email: ${email}` : hasFile ? "Candidate Email: (extract from the uploaded CV document)" : "Candidate Email: Unknown"}
 Target Job Description:
 """
 ${jobDescription}
@@ -194,15 +229,17 @@ INSTRUCTIONS:
   contents.push(promptText);
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: responseSchema as unknown as Record<string, unknown>,
-        temperature: 0.2, // Low temperature for high accuracy
-      }
-    });
+    const response = await withRetry(() =>
+      ai!.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: responseSchema as unknown as Record<string, unknown>,
+          temperature: 0.2,
+        },
+      })
+    );
 
     const text = response.text;
     if (!text) {

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { CVData } from "@/types";
-import { generateCVDocx } from "@/lib/generate-cv";
+import { generateCVPdf } from "@/lib/generate-cv-pdf";
 
 interface DownloadButtonProps {
   cvData: CVData;
@@ -12,46 +12,33 @@ interface DownloadButtonProps {
 export function DownloadButton({ cvData }: DownloadButtonProps) {
   const [status, setStatus] = useState<"idle" | "generating" | "success">("idle");
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (status !== "idle") return;
     setStatus("generating");
 
     try {
-      // Compile document
-      const blob = await generateCVDocx(cvData);
-      
-      // Setup file download anchor
-      const url = window.URL.createObjectURL(blob);
+      const blob = generateCVPdf(cvData);
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      
-      // Clean filename matching name
       const safeName = cvData.personal.fullName.replace(/[^a-zA-Z0-9]/g, "_");
       link.href = url;
-      link.download = `${safeName}_CV_Optimized.docx`;
-      
+      link.download = `${safeName}_CV_Optimized.pdf`;
       document.body.appendChild(link);
       link.click();
-      
-      // Clean up
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      
+      URL.revokeObjectURL(url);
       setStatus("success");
-      
-      // Reset button state
-      setTimeout(() => {
-        setStatus("idle");
-      }, 2500);
+      setTimeout(() => setStatus("idle"), 2500);
     } catch (err) {
-      console.error("Failed to generate and download docx", err);
+      console.error("Failed to generate PDF", err);
       setStatus("idle");
     }
   };
 
   const getLabel = () => {
-    if (status === "generating") return "Generating Docx...";
+    if (status === "generating") return "Generating PDF...";
     if (status === "success") return "Downloaded ✓";
-    return "Download .docx";
+    return "Download PDF";
   };
 
   return (
