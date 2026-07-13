@@ -1,11 +1,15 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ShowcaseMockup } from "./showcase-mockup";
+import { useTranslation } from "@/lib/i18n";
 
 export function Hero() {
+  const { t } = useTranslation();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -42,8 +46,12 @@ export function Hero() {
           variants={itemVariants}
           className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent leading-[1.08] mb-6 text-balance font-sans"
         >
-          Your CV, built to <br />
-          pass every ATS
+          {t("landing.hero.title").split("\n").map((line: string, index: number) => (
+            <React.Fragment key={index}>
+              {index > 0 && <br />}
+              {line}
+            </React.Fragment>
+          ))}
         </motion.h1>
 
         {/* Paragraph description */}
@@ -51,8 +59,7 @@ export function Hero() {
           variants={itemVariants}
           className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl leading-relaxed mb-10 text-pretty"
         >
-          Directly compile your GitHub repositories, code highlights, and professional experience 
-          into a tailored, ATS-ready resume engineered for tech recruiters.
+          {t("landing.hero.description")}
         </motion.p>
 
         {/* Call to Actions */}
@@ -65,15 +72,11 @@ export function Hero() {
               size="lg"
               className="px-8 py-4 font-semibold text-base gap-2 flex items-center group"
             >
-              Optimize my CV
+              {t("landing.hero.cta")}
               <span className="text-zinc-500 group-hover:text-zinc-900 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
             </Button>
           </Link>
         </motion.div>
-
-        <motion.p variants={itemVariants} className="text-xs text-zinc-500 mb-2">
-          No signup &bull; Free &bull; Download as .docx
-        </motion.p>
 
         {/* Showcase Mockup */}
         <ShowcaseMockup />
@@ -82,3 +85,4 @@ export function Hero() {
   );
 }
 export default Hero;
+

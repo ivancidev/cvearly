@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="relative z-10 border-t border-zinc-900 bg-[#030303] py-8 px-6 mt-auto w-full">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-600">
@@ -14,19 +19,20 @@ export function Footer() {
 
         {/* Links */}
         <div className="flex gap-6">
-          <span className="hover:text-zinc-300 cursor-pointer transition-colors">Privacy</span>
-          <span className="hover:text-zinc-300 cursor-pointer transition-colors">Terms</span>
+          <span className="hover:text-zinc-300 cursor-pointer transition-colors">{t("footer.privacy")}</span>
+          <span className="hover:text-zinc-300 cursor-pointer transition-colors">{t("footer.terms")}</span>
           <Link href="/" className="hover:text-zinc-300 transition-colors">
-            Docs
+            {t("footer.docs")}
           </Link>
         </div>
 
         {/* Copyright */}
         <div>
-          <span className="text-zinc-700">&copy; {new Date().getFullYear()} CVEarly. All rights reserved.</span>
+          <span className="text-zinc-700">&copy; {new Date().getFullYear()} CVEarly. {t("footer.rights")}</span>
         </div>
       </div>
     </footer>
   );
 }
 export default Footer;
+

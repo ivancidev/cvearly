@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 export function Features() {
+  const { t } = useTranslation();
   const [atsScore, setAtsScore] = useState(0);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export function Features() {
   return (
     <section className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-24">
       <h2 className="text-center text-2xl sm:text-4xl font-bold tracking-tight text-white mb-16 text-balance">
-        Everything you need to get shortlisted
+        {t("landing.features.title")}
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -72,9 +74,9 @@ export function Features() {
             </div>
           </div>
 
-          <h3 className="text-lg font-semibold text-zinc-100 mb-2">ATS Score</h3>
+          <h3 className="text-lg font-semibold text-zinc-100 mb-2">{t("landing.features.scoreTitle")}</h3>
           <p className="text-sm text-zinc-400 leading-relaxed">
-            See exactly how well your CV matches the role before you apply.
+            {t("landing.features.scoreDesc")}
           </p>
         </motion.div>
 
@@ -93,9 +95,9 @@ export function Features() {
             </svg>
           </div>
 
-          <h3 className="text-lg font-semibold text-zinc-100 mb-2">GitHub Integration</h3>
+          <h3 className="text-lg font-semibold text-zinc-100 mb-2">{t("landing.features.githubTitle")}</h3>
           <p className="text-sm text-zinc-400 leading-relaxed">
-            Turn your commits and repos into quantified, recruiter-ready achievements.
+            {t("landing.features.githubDesc")}
           </p>
         </motion.div>
 
@@ -117,9 +119,9 @@ export function Features() {
             </svg>
           </div>
 
-          <h3 className="text-lg font-semibold text-zinc-100 mb-2">Instant .docx download</h3>
+          <h3 className="text-lg font-semibold text-zinc-100 mb-2">{t("landing.features.docxTitle")}</h3>
           <p className="text-sm text-zinc-400 leading-relaxed">
-            {"Editable Word format that opens clean in every recruiter's inbox."}
+            {t("landing.features.docxDesc")}
           </p>
         </motion.div>
       </div>
@@ -127,3 +129,4 @@ export function Features() {
   );
 }
 export default Features;
+
