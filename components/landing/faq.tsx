@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 interface FAQItem {
   question: string;
@@ -10,7 +10,7 @@ interface FAQItem {
 }
 
 export function FAQ() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const faqs: FAQItem[] = [

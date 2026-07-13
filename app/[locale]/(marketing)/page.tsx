@@ -7,11 +7,11 @@ import { FAQ } from "@/components/landing/faq";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useTranslation } from "@/lib/i18n";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export default function LandingPage() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <div className="relative min-h-screen bg-[#030303] text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white">

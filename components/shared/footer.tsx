@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useTranslation } from "@/lib/i18n";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <footer className="relative z-10 border-t border-zinc-900 bg-[#030303] py-8 px-6 mt-auto w-full">

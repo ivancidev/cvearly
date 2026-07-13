@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 export function HowItWorks() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const steps = [
     {

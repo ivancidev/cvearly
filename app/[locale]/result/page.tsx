@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
@@ -10,12 +10,12 @@ import { ATSScore } from "@/components/result/ats-score";
 import { DownloadButton } from "@/components/result/download-button";
 import { Button } from "@/components/ui/button";
 import { GenerationResponse } from "@/types";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 export default function ResultPage() {
   const [result, setResult] = useState<GenerationResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   useEffect(() => {
     window.scrollTo({ top: 0 });

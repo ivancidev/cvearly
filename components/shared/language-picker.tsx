@@ -2,10 +2,13 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation, Language } from "@/lib/i18n";
+import { useLocale } from "next-intl";
+import { useRouter, usePathname } from "@/i18n/routing";
 
 export function LanguagePicker() {
-  const { language, setLanguage } = useTranslation();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -20,12 +23,12 @@ export function LanguagePicker() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const languages: { code: Language; label: string; flag: string }[] = [
+  const languages: { code: "en" | "es"; label: string; flag: string }[] = [
     { code: "en", label: "English", flag: "🇬🇧" },
     { code: "es", label: "Español", flag: "🇪🇸" },
   ];
 
-  const currentLang = languages.find((l) => l.code === language) || languages[0];
+  const currentLang = languages.find((l) => l.code === locale) || languages[0];
 
   return (
     <div className="relative inline-block text-left" ref={containerRef}>
@@ -59,13 +62,13 @@ export function LanguagePicker() {
             className="absolute right-0 mt-2 w-36 rounded-xl border border-zinc-800 bg-[#0e0e12]/95 backdrop-blur-md shadow-xl py-1.5 z-50 overflow-hidden"
           >
             {languages.map((lang) => {
-              const isSelected = lang.code === language;
+              const isSelected = lang.code === locale;
               return (
                 <button
                   key={lang.code}
                   type="button"
                   onClick={() => {
-                    setLanguage(lang.code);
+                    router.replace(pathname, { locale: lang.code });
                     setIsOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 text-xs transition-colors cursor-pointer text-left outline-none ${
@@ -90,3 +93,4 @@ export function LanguagePicker() {
     </div>
   );
 }
+

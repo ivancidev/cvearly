@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 export function Features() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [atsScore, setAtsScore] = useState(0);
 
   useEffect(() => {

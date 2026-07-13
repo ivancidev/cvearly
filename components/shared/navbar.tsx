@@ -1,22 +1,21 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { Button } from "../ui/button";
 import { GitHubStarButton } from "./github-star-button";
 import { LanguagePicker } from "./language-picker";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 // GitHub repo URL — defined in github-star-button.tsx
 
 export function Navbar() {
   const pathname = usePathname();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const isHome = pathname === "/" || pathname === "";
   const isResult = pathname === "/result";
   return (
-    <nav className="relative z-10 max-w-7xl mx-auto w-full px-6 py-5 flex items-center justify-between">
+    <nav className="relative z-50 max-w-7xl mx-auto w-full px-6 py-5 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-2.5 group">
         <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center group-hover:border-zinc-700 transition-all">
           <span className="font-mono text-sm font-semibold text-zinc-200 group-hover:text-white">&lt;/&gt;</span>
