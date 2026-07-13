@@ -241,7 +241,7 @@ function createSectionHeader(title: string): Paragraph {
     spacing: { before: 240, after: 120 },
     border: {
       bottom: {
-        color: "7C3AED", // Violet accent line
+        color: "0F172A", // Slate accent line
         space: 2,
         style: BorderStyle.SINGLE,
         size: 6, // 0.75 pt
@@ -252,7 +252,7 @@ function createSectionHeader(title: string): Paragraph {
         text: title,
         bold: true,
         size: 22, // 11pt
-        color: "7C3AED", // Violet theme color
+        color: "0F172A", // Slate theme color
         font: "Arial",
       }),
     ],

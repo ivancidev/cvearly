@@ -6,7 +6,7 @@ const W = 210; // A4 width mm
 const H = 297; // A4 height mm
 const CW = W - 2 * M; // content width
 
-const VIOLET: [number, number, number] = [124, 58, 237];
+const ACCENT: [number, number, number] = [15, 23, 42]; // Slate-900 theme color
 const DARK: [number, number, number] = [15, 23, 42];
 const SLATE: [number, number, number] = [71, 85, 105];
 const MUTED: [number, number, number] = [100, 116, 139];
@@ -26,10 +26,10 @@ export function generateCVPdf(cv: CVData): Blob {
     y += 5;
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(8.5);
-    pdf.setTextColor(...VIOLET);
+    pdf.setTextColor(...ACCENT);
     pdf.text(title.toUpperCase(), M, y);
     y += 2.5;
-    pdf.setDrawColor(...VIOLET);
+    pdf.setDrawColor(...ACCENT);
     pdf.setLineWidth(0.35);
     pdf.line(M, y, W - M, y);
     y += 5;

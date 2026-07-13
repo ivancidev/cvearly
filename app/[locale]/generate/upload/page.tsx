@@ -148,8 +148,10 @@ export default function UploadPage() {
   };
 
   return (
-    <div className={`relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30 ${isGenerating ? "pointer-events-none select-none" : ""}`}>
-      <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(124,58,237,0.10),transparent_70%)] pointer-events-none z-0" />
+    <div className={`relative min-h-screen bg-[#030303] text-zinc-100 flex flex-col ${isGenerating ? "pointer-events-none select-none" : ""}`}>
+      {/* Grid Pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:linear-gradient(to_bottom,white_75%,transparent_100%)] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(255,255,255,0.02),transparent_70%)] pointer-events-none z-0" />
       <Navbar />
 
       <main className="flex-grow relative z-10 w-full max-w-xl mx-auto px-6 py-10 md:py-14">
@@ -175,7 +177,7 @@ export default function UploadPage() {
 
               {/* Header */}
               <div className="mb-8">
-                <div className="inline-flex items-center gap-2 text-xs font-semibold text-violet-400 bg-violet-500/10 border border-violet-500/20 px-3 py-1 rounded-full mb-4">
+                <div className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-300 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full mb-4">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
@@ -207,10 +209,10 @@ export default function UploadPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className={`w-full min-h-[180px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-200 ${
                     isDragActive
-                      ? "border-violet-500/60 bg-violet-500/[0.06]"
+                      ? "border-zinc-500 bg-zinc-900/30"
                       : file
                       ? "border-emerald-500/40 bg-emerald-500/[0.03]"
-                      : "border-zinc-800 bg-zinc-950/50 hover:border-violet-500/40 hover:bg-violet-500/[0.03]"
+                      : "border-zinc-800 bg-zinc-950/50 hover:border-zinc-700 hover:bg-zinc-900/10"
                   }`}
                 >
                   {file ? (
@@ -249,7 +251,7 @@ export default function UploadPage() {
                       </div>
                       <div className="text-center">
                         <p className="text-sm text-zinc-300">
-                          <span className="text-violet-400 font-semibold">{t("uploadPage.dropzone.click")}</span> or drag &amp; drop
+                          <span className="text-zinc-200 hover:text-white font-semibold">{t("uploadPage.dropzone.click")}</span> or drag &amp; drop
                         </p>
                         <p className="text-xs text-zinc-600 mt-1">{t("uploadPage.dropzone.formats")}</p>
                       </div>
@@ -261,7 +263,7 @@ export default function UploadPage() {
                 <div className="flex flex-col gap-1.5">
                   <label className="flex items-center justify-between text-sm font-medium text-zinc-300">
                     {t("uploadPage.github.label")}
-                    <span className="text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full uppercase tracking-wider">
                       {t("uploadPage.github.optional")}
                     </span>
                   </label>
@@ -270,7 +272,7 @@ export default function UploadPage() {
                     placeholder="https://github.com/username"
                     value={githubUrl}
                     onChange={(e) => setGithubUrl(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-colors"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-700 focus:ring-1 focus:ring-zinc-800 transition-colors"
                   />
                 </div>
 
@@ -374,7 +376,7 @@ export default function UploadPage() {
               className="flex flex-col items-center justify-center py-24 text-center"
             >
               <div className="relative w-20 h-20 mb-8">
-                <div className="absolute inset-0 rounded-full border-4 border-violet-500/10 animate-ping" />
+                <div className="absolute inset-0 rounded-full border-4 border-white/5 animate-ping" />
                 <svg className="w-full h-full animate-spin text-white" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                   <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />

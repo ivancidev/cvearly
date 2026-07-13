@@ -45,7 +45,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
                   href={personal.github.startsWith("http") ? personal.github : `https://${personal.github}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:underline text-violet-600"
+                  className="hover:underline text-slate-700 hover:text-slate-900"
                 >
                   {personal.github.replace(/^(https?:\/\/)?(www\.)?github\.com\//, "github.com/")}
                 </a>
@@ -56,7 +56,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
 
         {/* Professional Summary */}
         <div className="mb-6">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-2 font-mono">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2 font-mono">
             Professional Summary
           </h3>
           <p className="text-xs sm:text-[13px] text-zinc-700 leading-relaxed text-pretty">
@@ -67,7 +67,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
         {/* Work Experience */}
         {experience && experience.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-3 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 font-mono">
               Work Experience
             </h3>
             <div className="flex flex-col gap-4">
@@ -98,7 +98,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
         {/* Projects */}
         {projects && projects.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-3 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 font-mono">
               Key Projects
             </h3>
             <div className="flex flex-col gap-3">
@@ -116,7 +116,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
                         href={proj.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[10px] sm:text-xs text-cyan-600 font-normal hover:underline ml-2"
+                        className="text-[10px] sm:text-xs text-slate-600 hover:text-slate-800 font-normal hover:underline ml-2"
                       >
                         {proj.url.replace(/^(https?:\/\/)?(www\.)?/, "")}
                       </a>
@@ -134,7 +134,7 @@ export const CVPreview = React.forwardRef<HTMLDivElement, CVPreviewProps>(
         {/* Skills */}
         {skills && skills.length > 0 && (
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-2.5 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2.5 font-mono">
               Core Skills
             </h3>
             <div className="flex flex-wrap gap-1.5">

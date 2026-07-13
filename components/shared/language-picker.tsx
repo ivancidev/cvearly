@@ -82,7 +82,7 @@ export function LanguagePicker() {
                     <span>{lang.label}</span>
                   </div>
                   {isSelected && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white" />
                   )}
                 </button>
               );

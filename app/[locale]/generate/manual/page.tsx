@@ -154,8 +154,10 @@ export default function ManualPage() {
   };
 
   return (
-    <div className={`relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30 ${isGenerating ? "pointer-events-none select-none" : ""}`}>
-      <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(6,182,212,0.07),transparent_70%)] pointer-events-none z-0" />
+    <div className={`relative min-h-screen bg-[#030303] text-zinc-100 flex flex-col ${isGenerating ? "pointer-events-none select-none" : ""}`}>
+      {/* Grid Pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:linear-gradient(to_bottom,white_75%,transparent_100%)] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(255,255,255,0.02),transparent_70%)] pointer-events-none z-0" />
       <Navbar />
 
       <main className="flex-grow relative z-10 w-full max-w-xl mx-auto px-6 py-10 md:py-14">
@@ -181,7 +183,7 @@ export default function ManualPage() {
 
               {/* Header */}
               <div className="mb-8">
-                <div className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full mb-4">
+                <div className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-300 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full mb-4">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -219,7 +221,7 @@ export default function ManualPage() {
                   label={
                     <span className="flex items-center justify-between w-full">
                       <span>{t("manualPage.github.label")}</span>
-                      <span className="text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full uppercase tracking-wider">
                         {t("manualPage.github.optional")}
                       </span>
                     </span>
@@ -407,7 +409,7 @@ export default function ManualPage() {
               className="flex flex-col items-center justify-center py-24 text-center"
             >
               <div className="relative w-20 h-20 mb-8">
-                <div className="absolute inset-0 rounded-full border-4 border-cyan-500/10 animate-ping" />
+                <div className="absolute inset-0 rounded-full border-4 border-white/5 animate-ping" />
                 <svg className="w-full h-full animate-spin text-white" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                   <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />

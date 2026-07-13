@@ -81,7 +81,10 @@ export default function ResultPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30 selection:text-white">
+    <div className="relative min-h-screen bg-[#030303] text-zinc-100 flex flex-col">
+      {/* Grid Pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:linear-gradient(to_bottom,white_75%,transparent_100%)] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(255,255,255,0.02),transparent_70%)] pointer-events-none z-0" />
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-8 relative z-10 flex flex-col gap-6">
@@ -135,7 +138,7 @@ export default function ResultPage() {
               <DownloadButton cvData={result.cv} />
 
               <Link href="/generate">
-                <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-violet-500/50 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none cursor-pointer">
+                <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none cursor-pointer">
                   {t("resultPage.actions.generateAgain")}
                 </button>
               </Link>

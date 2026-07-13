@@ -14,7 +14,7 @@ export default function GeneratePage() {
     {
       href: "/generate/upload",
       badge: t("generate.upload.badge"),
-      badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+      badgeColor: "text-amber-300 bg-amber-500/5 border-amber-500/15",
       title: t("generate.upload.title"),
       description: t("generate.upload.desc"),
       bullets: [
@@ -22,13 +22,13 @@ export default function GeneratePage() {
         t("generate.upload.bullet2"),
         t("generate.upload.bullet3"),
       ],
-      bulletColor: "text-violet-400",
+      bulletColor: "text-zinc-400",
       cta: t("generate.upload.cta"),
-      cardBorder: "border-violet-500/25 hover:border-violet-500/50",
-      cardBg: "bg-[#0e0b1a]",
-      iconBg: "bg-violet-500/10 border-violet-500/20 text-violet-400",
+      cardBorder: "border-zinc-800 hover:border-zinc-650 hover:shadow-[0_0_20px_-5px_rgba(255,255,255,0.02)]",
+      cardBg: "bg-zinc-950/30 backdrop-blur-sm",
+      iconBg: "bg-zinc-900 border-zinc-800 text-zinc-200 group-hover:border-zinc-700 group-hover:text-white",
       ctaClass:
-        "bg-violet-600 hover:bg-violet-500 text-white border border-violet-500/40",
+        "bg-white hover:bg-zinc-200 text-zinc-950 border border-transparent shadow-sm",
       icon: (
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -41,7 +41,7 @@ export default function GeneratePage() {
     {
       href: "/generate/manual",
       badge: t("generate.manual.badge"),
-      badgeColor: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
+      badgeColor: "text-zinc-400 bg-zinc-500/5 border-zinc-500/15",
       title: t("generate.manual.title"),
       description: t("generate.manual.desc"),
       bullets: [
@@ -49,13 +49,13 @@ export default function GeneratePage() {
         t("generate.manual.bullet2"),
         t("generate.manual.bullet3"),
       ],
-      bulletColor: "text-cyan-400",
+      bulletColor: "text-zinc-400",
       cta: t("generate.manual.cta"),
-      cardBorder: "border-zinc-700/40 hover:border-cyan-500/40",
-      cardBg: "bg-[#0c0f14]",
-      iconBg: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400",
+      cardBorder: "border-zinc-800 hover:border-zinc-650 hover:shadow-[0_0_20px_-5px_rgba(255,255,255,0.02)]",
+      cardBg: "bg-zinc-950/30 backdrop-blur-sm",
+      iconBg: "bg-zinc-900 border-zinc-800 text-zinc-200 group-hover:border-zinc-700 group-hover:text-white",
       ctaClass:
-        "bg-transparent hover:bg-white/[0.04] text-zinc-200 border border-zinc-700 hover:border-cyan-500/50",
+        "bg-transparent hover:bg-white/[0.04] text-zinc-300 border border-zinc-800 hover:border-zinc-700",
       icon: (
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -84,8 +84,10 @@ export default function GeneratePage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30 selection:text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(1000px_600px_at_50%_-150px,rgba(124,58,237,0.12),transparent_70%)] pointer-events-none z-0" />
+    <div className="relative min-h-screen bg-[#030303] text-zinc-100 flex flex-col">
+      {/* Grid Pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:linear-gradient(to_bottom,white_75%,transparent_100%)] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(1000px_600px_at_50%_-150px,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none z-0" />
 
       <Navbar />
 
