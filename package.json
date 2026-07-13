@@ -13,6 +13,7 @@
     "@google/genai": "^2.10.0",
     "@tsparticles/react": "^4.3.1",
     "@tsparticles/slim": "^4.3.1",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "docx": "^9.7.1",
     "framer-motion": "^12.42.2",
