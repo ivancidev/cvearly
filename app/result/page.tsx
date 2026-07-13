@@ -10,10 +10,12 @@ import { ATSScore } from "@/components/result/ats-score";
 import { DownloadButton } from "@/components/result/download-button";
 import { Button } from "@/components/ui/button";
 import { GenerationResponse } from "@/types";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ResultPage() {
   const [result, setResult] = useState<GenerationResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -64,12 +66,12 @@ export default function ResultPage() {
                 <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">No CV Found</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{t("resultPage.noCv.title")}</h2>
             <p className="text-sm text-zinc-400 mb-6">
-              {"It seems you haven't generated a tailored CV yet, or your session has expired."}
+              {t("resultPage.noCv.desc")}
             </p>
             <Link href="/generate" className="w-full">
-              <Button className="w-full font-semibold">Start CV Optimization</Button>
+              <Button className="w-full font-semibold">{t("resultPage.noCv.cta")}</Button>
             </Link>
           </div>
         </main>
@@ -97,10 +99,10 @@ export default function ResultPage() {
           </div>
           <div>
             <div className="font-bold text-sm sm:text-base text-emerald-300">
-              Your CV is ready
+              {t("resultPage.success.title")}
             </div>
             <div className="text-xs sm:text-sm text-emerald-400/80 mt-0.5">
-              Optimized for the target role &bull; {result.ats.matchedKeywords.length} keywords matched
+              {t("resultPage.success.desc", { count: result.ats.matchedKeywords.length })}
             </div>
           </div>
         </motion.div>
@@ -134,7 +136,7 @@ export default function ResultPage() {
 
               <Link href="/generate">
                 <button className="w-full bg-transparent hover:bg-white/[0.02] border border-zinc-800 hover:border-violet-500/50 text-zinc-300 hover:text-white py-3.5 px-5 rounded-xl font-semibold text-sm transition-all outline-none cursor-pointer">
-                  Generate again
+                  {t("resultPage.actions.generateAgain")}
                 </button>
               </Link>
             </div>
@@ -147,3 +149,4 @@ export default function ResultPage() {
     </div>
   );
 }
+

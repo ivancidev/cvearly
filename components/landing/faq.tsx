@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/lib/i18n";
 
 interface FAQItem {
   question: string;
@@ -9,24 +10,25 @@ interface FAQItem {
 }
 
 export function FAQ() {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const faqs: FAQItem[] = [
     {
-      question: "Does cvearly store my uploaded CV or personal data?",
-      answer: "No. All CV parsing and keyword analysis happens in-memory during the API lifecycle. We do not store your resumes, contact details, or PDF uploads. The generated CV is saved locally in your browser session for direct download.",
+      question: t("landing.faq.q1"),
+      answer: t("landing.faq.a1"),
     },
     {
-      question: "How does the GitHub integration work?",
-      answer: "When you provide your GitHub profile URL, we use the public GitHub API to scan your repositories. We sort them by star count and analyze their programming languages, descriptions, and commit highlights. We use this information to select actual, active projects to back up your experience milestones.",
+      question: t("landing.faq.q2"),
+      answer: t("landing.faq.a2"),
     },
     {
-      question: "Is the final download compatible with ATS scanning platforms?",
-      answer: "Yes, fully. We compile the optimized CV directly into standard Word Document format (.docx) using clean paragraph margins, standard fonts, and simple table outlines. This structure guarantees that applicant tracking systems (such as Workday or Greenhouse) can parse the text cleanly.",
+      question: t("landing.faq.q3"),
+      answer: t("landing.faq.a3"),
     },
     {
-      question: "Can I download my CV directly in other formats?",
-      answer: "Currently, we compile directly into a .docx document. This provides you with an editable format that you can customize in Microsoft Word or Google Docs before exporting to PDF for final job submissions.",
+      question: t("landing.faq.q4"),
+      answer: t("landing.faq.a4"),
     },
   ];
 
@@ -38,10 +40,10 @@ export function FAQ() {
     <section className="relative z-10 max-w-4xl mx-auto px-6 py-16 md:py-24">
       <div className="text-center mb-12">
         <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-          Frequently asked questions
+          {t("landing.faq.title")}
         </h2>
         <p className="text-zinc-500 text-sm max-w-md mx-auto">
-          Everything you need to know about privacy, compilation, and file formats.
+          {t("landing.faq.subtitle")}
         </p>
       </div>
 
@@ -92,3 +94,4 @@ export function FAQ() {
   );
 }
 export default FAQ;
+

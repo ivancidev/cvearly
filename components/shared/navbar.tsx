@@ -4,26 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import { GitHubStarButton } from "./github-star-button";
+import { LanguagePicker } from "./language-picker";
+import { useTranslation } from "@/lib/i18n";
 
 // GitHub repo URL — defined in github-star-button.tsx
 
 export function Navbar() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const isHome = pathname === "/" || pathname === "";
-  const isGenerate = pathname === "/generate";
   const isResult = pathname === "/result";
-
-  const handleScrollToHowItWorks = (e: React.MouseEvent) => {
-    if (isHome) {
-      e.preventDefault();
-      const element = document.getElementById("how-it-works");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
-
   return (
     <nav className="relative z-10 max-w-7xl mx-auto w-full px-6 py-5 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-2.5 group">
@@ -31,7 +22,10 @@ export function Navbar() {
           <span className="font-mono text-sm font-semibold text-zinc-200 group-hover:text-white">&lt;/&gt;</span>
         </div>
         <span className="font-semibold text-lg tracking-tight text-white font-sans">
-          cvearly
+          {t("navbar.logo")}
+        </span>
+        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 select-none font-mono">
+          BETA
         </span>
       </Link>
 
@@ -39,34 +33,19 @@ export function Navbar() {
         {/* GitHub star button — always visible */}
         <GitHubStarButton />
 
-        {isHome && (
-          <>
-            <a
-              href="#how-it-works"
-              onClick={handleScrollToHowItWorks}
-              className="text-zinc-400 text-sm hover:text-white transition-colors cursor-pointer"
-            >
-              How it works
-            </a>
-            <Link href="/generate">
-              <Button size="sm">Try it free</Button>
-            </Link>
-          </>
-        )}
+        {/* Language Selector Dropdown */}
+        <LanguagePicker />
 
-        {isGenerate && (
-          <Link
-            href="/"
-            className="text-zinc-400 text-sm hover:text-white transition-colors flex items-center gap-1.5"
-          >
-            &larr; Back home
+        {isHome && (
+          <Link href="/generate">
+            <Button size="sm">{t("navbar.tryItFree")}</Button>
           </Link>
         )}
 
         {isResult && (
           <Link href="/generate">
             <Button size="sm" variant="outline">
-              &larr; New CV
+              &larr; {t("navbar.newCv")}
             </Button>
           </Link>
         )}
@@ -75,3 +54,4 @@ export function Navbar() {
   );
 }
 export default Navbar;
+

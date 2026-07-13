@@ -10,21 +10,23 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { getRateLimitState, consumeRateLimit } from "@/lib/rate-limit";
+import { useTranslation } from "@/lib/i18n";
 
 const DAILY_LIMIT = 3;
 
-const loadingSteps = [
-  "Processing your details...",
-  "Connecting to public GitHub API...",
-  "Analyzing top starred repositories...",
-  "Extracting critical keywords from job offer...",
-  "Tailoring experience milestones using active verbs...",
-  "Running ATS score verification... Almost ready!",
+const loadingStepsKeys = [
+  "manualPage.loader.step1",
+  "manualPage.loader.step2",
+  "manualPage.loader.step3",
+  "manualPage.loader.step4",
+  "manualPage.loader.step5",
+  "manualPage.loader.step6",
 ];
 
 export default function ManualPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, language } = useTranslation();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,21 +46,22 @@ export default function ManualPage() {
   useEffect(() => {
     if (!isGenerating) return;
     const interval = setInterval(() => {
-      setProgressStep((prev) => (prev < loadingSteps.length - 1 ? prev + 1 : prev));
+      setProgressStep((prev) => (prev < loadingStepsKeys.length - 1 ? prev + 1 : prev));
     }, 3500);
     return () => clearInterval(interval);
   }, [isGenerating]);
+
 
   const MAX_FILE_BYTES = 7 * 1024 * 1024;
 
   const validateAndSetFile = (f: File) => {
     const ext = f.name.split(".").pop()?.toLowerCase();
     if (!["pdf", "docx", "txt"].includes(ext ?? "")) {
-      setError("Unsupported format. Please upload PDF, DOCX, or TXT.");
+      setError(t("manualPage.errors.unsupported"));
       return;
     }
     if (f.size > MAX_FILE_BYTES) {
-      setError(`File too large (${(f.size / 1024 / 1024).toFixed(1)} MB). Max 7 MB.`);
+      setError(t("manualPage.errors.tooLarge").replace("{size}", (f.size / 1024 / 1024).toFixed(1)));
       return;
     }
     setFile(f);
@@ -96,8 +99,8 @@ export default function ManualPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email) { setError("Please fill in Full Name and Email."); return; }
-    if (!jobDescription) { setError("Please paste the job description."); return; }
+    if (!fullName || !email) { setError(t("manualPage.errors.personalRequired")); return; }
+    if (!jobDescription) { setError(t("manualPage.errors.jdRequired")); return; }
 
     setIsGenerating(true);
     setProgressStep(0);
@@ -132,7 +135,7 @@ export default function ManualPage() {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || "Failed to generate optimized resume");
+        throw new Error(errData.error || t("manualPage.errors.unexpected"));
       }
 
       const data = await response.json();
@@ -140,10 +143,10 @@ export default function ManualPage() {
       setRemainingGenerations(consumeRateLimit(remainingGenerations));
       router.push("/result");
     } catch (err) {
-      const rawMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const rawMsg = err instanceof Error ? err.message : String(t("manualPage.errors.unexpected"));
       setError(
         rawMsg.includes("503") || rawMsg.includes("UNAVAILABLE")
-          ? "Gemini is experiencing high demand. Please try again in a moment."
+          ? t("manualPage.errors.geminiLimit")
           : rawMsg
       );
       setIsGenerating(false);
@@ -173,7 +176,7 @@ export default function ManualPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 12H5M12 5l-7 7 7 7" />
                 </svg>
-                Choose differently
+                {t("manualPage.back")}
               </Link>
 
               {/* Header */}
@@ -183,13 +186,13 @@ export default function ManualPage() {
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                   </svg>
-                  Fill manually
+                  {t("manualPage.tag")}
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-                  Build from scratch
+                  {t("manualPage.title")}
                 </h1>
                 <p className="text-sm text-zinc-400">
-                  Enter your details below. Optionally upload your CV at the bottom to enrich the AI&apos;s output.
+                  {t("manualPage.desc")}
                 </p>
               </div>
 
@@ -197,15 +200,15 @@ export default function ManualPage() {
                 {/* Name + Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
-                    label="Full Name"
-                    placeholder="Ada Lovelace"
+                    label={t("manualPage.fullName.label")}
+                    placeholder={t("manualPage.fullName.placeholder")}
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                   />
                   <Input
-                    label="Email Address"
+                    label={t("manualPage.email.label")}
                     type="email"
-                    placeholder="ada@example.com"
+                    placeholder={t("manualPage.email.placeholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -215,9 +218,9 @@ export default function ManualPage() {
                 <Input
                   label={
                     <span className="flex items-center justify-between w-full">
-                      <span>GitHub Profile URL</span>
+                      <span>{t("manualPage.github.label")}</span>
                       <span className="text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        Optional
+                        {t("manualPage.github.optional")}
                       </span>
                     </span>
                   }
@@ -228,8 +231,8 @@ export default function ManualPage() {
 
                 {/* Job Description */}
                 <Textarea
-                  label="Job Description"
-                  placeholder="Paste the job offer details, requirements, and keywords here..."
+                  label={t("manualPage.jobDescription.label")}
+                  placeholder={t("manualPage.jobDescription.placeholder")}
                   className="h-36"
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
@@ -240,13 +243,13 @@ export default function ManualPage() {
                 <Textarea
                   label={
                     <span className="flex items-center justify-between w-full">
-                      <span>Extra Context</span>
+                      <span>{t("manualPage.extraContext.label")}</span>
                       <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        Optional
+                        {t("manualPage.extraContext.optional")}
                       </span>
                     </span>
                   }
-                  placeholder="Certifications, key achievements, or anything you want to prioritize..."
+                  placeholder={t("manualPage.extraContext.placeholder")}
                   className="h-24"
                   value={extraContext}
                   onChange={(e) => setExtraContext(e.target.value)}
@@ -256,11 +259,17 @@ export default function ManualPage() {
                 <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-sm font-semibold text-zinc-200">Boost with your CV</p>
-                      <p className="text-xs text-zinc-500 mt-0.5">Upload your existing resume for richer, more accurate output</p>
+                      <p className="text-sm font-semibold text-zinc-200">
+                        {language === "es" ? "Potencia con tu CV" : "Boost with your CV"}
+                      </p>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        {language === "es"
+                          ? "Sube tu currículum actual para obtener un resultado más rico y preciso"
+                          : "Upload your existing resume for richer, more accurate output"}
+                      </p>
                     </div>
                     <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full uppercase tracking-wider flex-shrink-0 ml-3">
-                      Optional
+                      {t("manualPage.uploadCv.optional")}
                     </span>
                   </div>
 
@@ -291,7 +300,7 @@ export default function ManualPage() {
                         onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
                         className="text-xs text-zinc-600 hover:text-red-400 border border-zinc-800 hover:border-red-500/30 px-2.5 py-1 rounded-lg transition-colors ml-3 flex-shrink-0 cursor-pointer"
                       >
-                        Remove
+                        {t("uploadPage.dropzone.remove")}
                       </button>
                     </div>
                   ) : (
@@ -316,9 +325,9 @@ export default function ManualPage() {
                       </div>
                       <div>
                         <p className="text-sm text-zinc-400">
-                          <span className="text-zinc-300 font-medium">Click to upload</span> or drag &amp; drop
+                          <span className="text-zinc-300 font-medium">{t("uploadPage.dropzone.click")}</span> or drag &amp; drop
                         </p>
-                        <p className="text-xs text-zinc-600 mt-0.5">PDF, DOCX, or TXT · Max 7 MB</p>
+                        <p className="text-xs text-zinc-600 mt-0.5">{t("uploadPage.dropzone.formats")}</p>
                       </div>
                     </div>
                   )}
@@ -341,24 +350,50 @@ export default function ManualPage() {
                   disabled={isLimitReached}
                   className="w-full font-semibold mt-2"
                 >
-                  {isLimitReached ? "Daily limit reached" : "Optimize my CV"}
+                  {isLimitReached ? t("manualPage.submit.limitReached") : t("manualPage.submit.optimize")}
                 </Button>
 
                 {isLimitReached ? (
                   <div className="text-center p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
                     <p className="text-xs text-amber-400">
-                      You&apos;ve used your {DAILY_LIMIT} free generations for today. Resets tomorrow — or{" "}
-                      <a href="https://github.com/ivancidev/cvearly" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-300 cursor-pointer">
-                        self-host with your API key
-                      </a>.
+                      {t("manualPage.rateLimit.used")
+                        .split("{selfHost}")
+                        .map((part: string, idx: number) => (
+                          <React.Fragment key={idx}>
+                            {idx > 0 && (
+                              <a
+                                href="https://github.com/ivancidev/cvearly"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline hover:text-amber-300 cursor-pointer"
+                              >
+                                {language === "es"
+                                  ? "hospedarlo tú mismo con tu clave de API"
+                                  : "self-host with your API key"}
+                              </a>
+                            )}
+                            {part}
+                          </React.Fragment>
+                        ))}
                     </p>
                   </div>
                 ) : (
                   <p className="text-center text-xs text-zinc-500">
-                    <span className={`font-semibold ${remainingGenerations === 1 ? "text-amber-400" : "text-zinc-400"}`}>
-                      {remainingGenerations}
-                    </span>{" "}
-                    of {DAILY_LIMIT} free generations remaining today
+                    {language === "es" ? (
+                      <>
+                        <span className={`font-semibold ${remainingGenerations === 1 ? "text-amber-400" : "text-zinc-400"}`}>
+                          {remainingGenerations}
+                        </span>{" "}
+                        de {DAILY_LIMIT} generaciones gratuitas restantes hoy
+                      </>
+                    ) : (
+                      <>
+                        <span className={`font-semibold ${remainingGenerations === 1 ? "text-amber-400" : "text-zinc-400"}`}>
+                          {remainingGenerations}
+                        </span>{" "}
+                        of {DAILY_LIMIT} free generations remaining today
+                      </>
+                    )}
                   </p>
                 )}
               </form>
@@ -385,10 +420,10 @@ export default function ManualPage() {
                 transition={{ duration: 0.3 }}
                 className="text-lg font-bold text-white mb-3"
               >
-                {loadingSteps[progressStep]}
+                {t(loadingStepsKeys[progressStep])}
               </motion.h3>
               <p className="text-sm text-zinc-500 max-w-xs">
-                We extract keywords, analyze commits, and build your tailor-made document. Up to 20 seconds.
+                {t("manualPage.loader.sub")}
               </p>
             </motion.div>
           )}
@@ -399,3 +434,4 @@ export default function ManualPage() {
     </div>
   );
 }
+
