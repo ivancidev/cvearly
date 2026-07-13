@@ -2,13 +2,13 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Button } from "../ui/button";
 import { ShowcaseMockup } from "./showcase-mockup";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 export function Hero() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const containerVariants = {
     hidden: { opacity: 0 },

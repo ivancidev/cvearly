@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { Link, useRouter } from "@/i18n/routing";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { getRateLimitState, consumeRateLimit } from "@/lib/rate-limit";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations, useLocale } from "next-intl";
 
 const DAILY_LIMIT = 3;
 
@@ -25,7 +24,8 @@ const loadingStepsKeys = [
 export default function UploadPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { t, language } = useTranslation();
+  const t = useTranslations();
+  const locale = useLocale();
 
   const [file, setFile] = useState<File | null>(null);
   const [githubUrl, setGithubUrl] = useState("");
@@ -148,7 +148,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30">
+    <div className={`relative min-h-screen bg-[#0A0A0F] text-zinc-100 flex flex-col selection:bg-violet-500/30 ${isGenerating ? "pointer-events-none select-none" : ""}`}>
       <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_50%_-100px,rgba(124,58,237,0.10),transparent_70%)] pointer-events-none z-0" />
       <Navbar />
 
@@ -334,7 +334,7 @@ export default function UploadPage() {
                                 rel="noopener noreferrer"
                                 className="underline hover:text-amber-300 cursor-pointer"
                               >
-                                {language === "es"
+                                {locale === "es"
                                   ? "hospedarlo tú mismo con tu clave de API"
                                   : "self-host with your API key"}
                               </a>
@@ -346,7 +346,7 @@ export default function UploadPage() {
                   </div>
                 ) : (
                   <p className="text-center text-xs text-zinc-500">
-                    {language === "es" ? (
+                    {locale === "es" ? (
                       <>
                         <span className={`font-semibold ${remainingGenerations === 1 ? "text-amber-400" : "text-zinc-400"}`}>
                           {remainingGenerations}

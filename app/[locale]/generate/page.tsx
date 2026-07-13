@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslations } from "next-intl";
 
 export default function GeneratePage() {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const paths = [
     {

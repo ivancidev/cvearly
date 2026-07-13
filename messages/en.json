@@ -1,0 +1,212 @@
+{
+  "navbar": {
+    "logo": "cvearly",
+    "howItWorks": "How it works",
+    "tryItFree": "Start (Beta)",
+    "backHome": "Back home",
+    "newCv": "New CV"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "docs": "Docs",
+    "rights": "All rights reserved."
+  },
+  "landing": {
+    "hero": {
+      "title": "Your CV, built to \n pass every ATS",
+      "description": "Directly compile your GitHub repositories, code highlights, and professional experience into a tailored, ATS-ready resume engineered for tech recruiters.",
+      "cta": "Optimize my CV",
+      "badge": "No signup • Free • Download as .docx"
+    },
+    "howItWorks": {
+      "tag": "How it works",
+      "title": "Three steps to a better CV",
+      "step1Title": "Paste job description & upload CV",
+      "step1Desc": "Drop in the job offer and your current resume (.pdf, .docx, or .txt). We extract every keyword and skill the ATS scans for.",
+      "step2Title": "Add your GitHub (Optional)",
+      "step2Desc": "We analyze your repositories and commits to surface real projects, programming languages, and active open-source contributions.",
+      "step3Title": "Download your optimized CV",
+      "step3Desc": "Get a beautifully formatted, recruiter-ready .docx document with a detailed ATS score and improvement checklist."
+    },
+    "features": {
+      "title": "Everything you need to get shortlisted",
+      "scoreTitle": "ATS Score",
+      "scoreDesc": "See exactly how well your CV matches the role before you apply.",
+      "githubTitle": "GitHub Integration",
+      "githubDesc": "Turn your commits and repos into quantified, recruiter-ready achievements.",
+      "docxTitle": "Instant .docx download",
+      "docxDesc": "Editable Word format that opens clean in every recruiter's inbox."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Everything you need to know about privacy, compilation, and file formats.",
+      "q1": "Does cvearly store my uploaded CV or personal data?",
+      "a1": "No. All CV parsing and keyword analysis happens in-memory during the API lifecycle. We do not store your resumes, contact details, or PDF uploads. The generated CV is saved locally in your browser session for direct download.",
+      "q2": "How does the GitHub integration work?",
+      "a2": "When you provide your GitHub profile URL, we use the public GitHub API to scan your repositories. We sort them by star count and analyze their programming languages, descriptions, and commit highlights. We use this information to select actual, active projects to back up your experience milestones.",
+      "q3": "Is the final download compatible with ATS scanning platforms?",
+      "a3": "Yes, fully. We compile the optimized CV directly into standard Word Document format (.docx) using clean paragraph margins, standard fonts, and simple table outlines. This structure guarantees that applicant tracking systems (such as Workday or Greenhouse) can parse the text cleanly.",
+      "q4": "Can I download my CV directly in other formats?",
+      "a4": "Currently, we compile directly into a .docx document. This provides you with an editable format that you can customize in Microsoft Word or Google Docs before exporting to PDF for final job submissions."
+    },
+    "cta": {
+      "title": "Ready to compile your resume?",
+      "desc": "Build an ATS-friendly developer resume backed by your actual repository metrics and project achievements in seconds.",
+      "cta": "Optimize my CV"
+    }
+  },
+  "generate": {
+    "title": "Generate your CV",
+    "subtitle": "How do you want to start? Both paths produce the same ATS-optimized PDF.",
+    "upload": {
+      "title": "Upload my CV",
+      "badge": "Quickest",
+      "desc": "Drop your existing resume and we'll tailor it to the role. We extract your info automatically — no typing needed.",
+      "bullet1": "Name & email auto-detected",
+      "bullet2": "Keywords matched to job description",
+      "bullet3": "PDF download ready in seconds",
+      "cta": "Start uploading"
+    },
+    "manual": {
+      "title": "Fill manually",
+      "badge": "Full control",
+      "desc": "Enter your details yourself. You can also upload your CV to enrich the AI's output and get even better results.",
+      "bullet1": "You control every field",
+      "bullet2": "Optional CV upload for richer output",
+      "bullet3": "GitHub repositories analyzed",
+      "cta": "Fill my details"
+    },
+    "steps": {
+      "title": "How it works",
+      "s1Title": "Choose your path",
+      "s1Desc": "Upload an existing CV or fill in your details from scratch.",
+      "s2Title": "Paste the job description",
+      "s2Desc": "The AI extracts keywords and tailors every section to the role.",
+      "s3Title": "Download your PDF",
+      "s3Desc": "Get an ATS-optimized PDF ready to submit in seconds."
+    }
+  },
+  "uploadPage": {
+    "back": "Choose differently",
+    "tag": "Upload & Optimize",
+    "title": "Upload your CV",
+    "desc": "We extract your name, email, and experience automatically. Just add the job description.",
+    "dropzone": {
+      "ready": "Ready",
+      "remove": "Remove",
+      "click": "Click to upload",
+      "formats": "PDF, DOCX, or TXT · Max 7 MB"
+    },
+    "github": {
+      "label": "GitHub Profile URL",
+      "optional": "Optional"
+    },
+    "jobDescription": {
+      "label": "Job Description",
+      "placeholder": "Paste the job offer details, requirements, and keywords here..."
+    },
+    "extraContext": {
+      "label": "Extra Context",
+      "optional": "Optional",
+      "placeholder": "Certifications, key achievements, or anything you want to prioritize..."
+    },
+    "errors": {
+      "fileRequired": "Please upload your CV file.",
+      "jdRequired": "Please paste the job description.",
+      "unsupported": "Unsupported format. Please upload PDF, DOCX, or TXT.",
+      "tooLarge": "File too large ({size} MB). Max 7 MB.",
+      "geminiLimit": "Gemini is experiencing high demand. Please try again in a moment.",
+      "unexpected": "An unexpected error occurred."
+    },
+    "submit": {
+      "limitReached": "Daily limit reached",
+      "optimize": "Optimize my CV"
+    },
+    "rateLimit": {
+      "used": "You've used your {limit} free generations for today. Resets tomorrow — or {selfHost}.",
+      "remaining": "{remaining} of {limit} free generations remaining today"
+    },
+    "loader": {
+      "step1": "Parsing your uploaded CV...",
+      "step2": "Extracting experience and skills...",
+      "step3": "Connecting to public GitHub API...",
+      "step4": "Matching keywords to job requirements...",
+      "step5": "Tailoring your professional summary...",
+      "step6": "Running ATS score verification... Almost ready!",
+      "sub": "Extracting keywords, analyzing your CV, building your tailored document. Up to 20 seconds."
+    }
+  },
+  "manualPage": {
+    "back": "Choose differently",
+    "tag": "Manual entry",
+    "title": "Fill manually",
+    "desc": "Enter your details yourself. You can also upload your CV to enrich the AI's output.",
+    "personal": "Personal details",
+    "fullName": {
+      "label": "Full Name",
+      "placeholder": "John Doe"
+    },
+    "email": {
+      "label": "Email Address",
+      "placeholder": "john.doe@example.com"
+    },
+    "github": {
+      "label": "GitHub Profile URL",
+      "optional": "Optional"
+    },
+    "uploadCv": {
+      "label": "Upload existing CV",
+      "optional": "Optional"
+    },
+    "jobDescription": {
+      "label": "Job Description",
+      "placeholder": "Paste the job offer details, requirements, and keywords here..."
+    },
+    "extraContext": {
+      "label": "Extra Context",
+      "optional": "Optional",
+      "placeholder": "Certifications, key achievements, or anything you want to prioritize..."
+    },
+    "errors": {
+      "personalRequired": "Please fill in Full Name and Email.",
+      "jdRequired": "Please paste the job description.",
+      "unsupported": "Unsupported format. Please upload PDF, DOCX, or TXT.",
+      "tooLarge": "File too large ({size} MB). Max 7 MB.",
+      "geminiLimit": "Gemini is experiencing high demand. Please try again in a moment.",
+      "unexpected": "An unexpected error occurred."
+    },
+    "submit": {
+      "limitReached": "Daily limit reached",
+      "optimize": "Optimize my CV"
+    },
+    "rateLimit": {
+      "used": "You've used your {limit} free generations for today. Resets tomorrow — or {selfHost}.",
+      "remaining": "{remaining} of {limit} free generations remaining today"
+    },
+    "loader": {
+      "step1": "Processing your details...",
+      "step2": "Connecting to public GitHub API...",
+      "step3": "Analyzing top starred repositories...",
+      "step4": "Extracting critical keywords from job offer...",
+      "step5": "Tailoring experience milestones using active verbs...",
+      "step6": "Running ATS score verification... Almost ready!",
+      "sub": "Extracting keywords, analyzing your CV, building your tailored document. Up to 20 seconds."
+    }
+  },
+  "resultPage": {
+    "loading": "Loading",
+    "noCv": {
+      "title": "No CV Found",
+      "desc": "It seems you haven't generated a tailored CV yet, or your session has expired.",
+      "cta": "Start CV Optimization"
+    },
+    "success": {
+      "title": "Your CV is ready",
+      "desc": "Optimized for the target role • {count} keywords matched"
+    },
+    "actions": {
+      "generateAgain": "Generate again"
+    }
+  }
+}
